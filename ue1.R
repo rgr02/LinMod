@@ -3,6 +3,7 @@ rm(list = ls())
 # A.1 #########################################################################
 library(dplyr)
 
+
 mietpreise <-
   read.table(
   "http://www.uni-goettingen.de/de/document/download/ba9a7b9c1e3a4a7d50a370e3bce92303.raw/mietspiegel99.raw",
@@ -200,7 +201,7 @@ h2 <- ggplot() +
   theme_bw() +
   ylab("Geschätzte Dichte") +
   xlab("Nettomiete pro qm") +
-  theme(legend.position = "none")
+  theme(legend.position = "top") +
   theme(legend.title = element_blank())
 
 multiplot(h1, h2, cols = 2)
