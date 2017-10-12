@@ -174,7 +174,7 @@ p3 <- ggplot(data = mietpreise) +
 p4 <- ggplot(data = mietpreise) +
   geom_histogram(aes(x = mietpreise$bjahr, y = ..density..),
                  colour="black", fill="white") +
-  xlab("Wohnfläche in qm") +
+  xlab("Baujahr") +
   ylab("geschätzte Dichte") +
   xlim(1910,2000) +
   ylim(0,0.08) +
@@ -188,9 +188,11 @@ multiplot(p1, p2, p3, p4, cols = 2)
 
 
 h1 <- ggplot(data = mietpreise) +
-  geom_jitter(aes(mietpreise$lage, mietpreise$mieteqm)) +
+  geom_jitter(aes(mietpreise$lage, mietpreise$mieteqm), alpha = 0.3) +
   geom_boxplot(aes(mietpreise$lage, mietpreise$mieteqm,
-                   fill = mietpreise$lage),alpha = 0.4) +
+                   fill = mietpreise$lage),alpha = 0.4,
+               outlier.size = 3,
+               outlier.shape = 1) +
   theme(legend.position = "none") +
   ylab("Nettomiete pro qm") +
   xlab("")
