@@ -121,6 +121,9 @@ MAX <- c(round(max(mietpreise$miete),2),
 tabelle <- as.data.frame(cbind(tabelle, MAX))
 View(tabelle)
 
+# summary um abzuschätzen ob ereignisse selten sind
+# zb lage. lohnt es sich das bad zu renovieren...
+
 # Replication of Abbildung 1.3 / 1.7
 
 source("multiplot.R")
@@ -186,6 +189,9 @@ p4 <- ggplot(data = mietpreise) +
 
 multiplot(p1, p2, p3, p4, cols = 2)
 
+# density -> marginale verteilung = unbedingte Verteilung 
+# y|x bedingte Verteilung
+# Verteilung von x unwichtig
 
 h1 <- ggplot(data = mietpreise) +
   geom_jitter(aes(mietpreise$lage, mietpreise$mieteqm), alpha = 0.3) +
@@ -193,9 +199,12 @@ h1 <- ggplot(data = mietpreise) +
                    fill = mietpreise$lage),alpha = 0.4,
                outlier.size = 3,
                outlier.shape = 1) +
+  theme_bw() +
   theme(legend.position = "none") +
   ylab("Nettomiete pro qm") +
-  xlab("")
+  xlab("") +
+  theme(legend.title = element_blank()) +
+  theme(legend.position = "top") 
 
 h2 <- ggplot() +
   geom_density(aes(mietpreise$mieteqm, colour = mietpreise$lage),
@@ -222,15 +231,14 @@ data$residual <- data$y - data$yi
 
 ggplot() +
   geom_point(aes(data$x, data$y)) +
-  geom_abline(intercept = b0, slope = b1, colour = "red") +
-  geom_point(aes(data$x, data$residual, col = "green")) +
+  geom_abline(intercept = b0, slope = b1, colour = "red", size = 1.2) +
+  geom_point(aes(data$x, data$residual),colour = "blue", size = 1.2) +
   geom_abline(intercept = 0, slope = 0) +
   ylab("Y - Werte") +
   xlab("X - Werte") +
-  theme(legend)
   theme_bw()
 
-  # Aufgabe 4 ##################################################################
+# Aufgabe 4 ##################################################################
   
   library(stargazer)
   
@@ -241,18 +249,24 @@ ggplot() +
   
   stargazer(model.level, model.log, type = "text")
   
+  
 m1.plot <- ggplot() +
   geom_point(aes(mietpreise$flaeche, mietpreise$miete), alpha = 0.1) +
   geom_smooth(aes(mietpreise$flaeche, mietpreise$miete),method = "lm") +
   ylab("Mietpreise") +
   xlab("Fläche") +
-  theme_bw()
+  ggtitle("Level - Level Modell") +
+  theme_bw()+
+  theme(plot.title = element_text(hjust = 0.5))
+
 
 m2.plot <- ggplot() +
   geom_point(aes(mietpreise$flaeche, log(mietpreise$miete)), alpha = 0.1) +
   geom_smooth(aes(mietpreise$flaeche, log(mietpreise$miete)), method = "lm") +
   ylab("Log(Mietpreise)") +
   xlab("Fläche") +
-  theme_bw()
+  ggtitle("Log - Level Modell") +
+  theme_bw() +
+  theme(plot.title = element_text(hjust = 0.5))
 
 multiplot(m1.plot, m2.plot)
