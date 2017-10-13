@@ -242,8 +242,6 @@ ggplot() +
   
   library(stargazer)
   
-  # non nested alternative
-  
   model.level <- lm(miete ~ flaeche, data = mietpreise)
   model.log <- lm(log(miete) ~ flaeche, data = mietpreise)
   
@@ -258,7 +256,6 @@ m1.plot <- ggplot() +
   ggtitle("Level - Level Modell") +
   theme_bw()+
   theme(plot.title = element_text(hjust = 0.5))
-
 
 m2.plot <- ggplot() +
   geom_point(aes(mietpreise$flaeche, log(mietpreise$miete)), alpha = 0.1) +
