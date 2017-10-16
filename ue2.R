@@ -20,18 +20,18 @@ library(ggplot2)
 
 mietpreise$flaeche.reziprok <- 1/mietpreise$flaeche
 
-model.1 <- lm(mieteqm ~ flaeche, data = mietpreise)
-model.2 <- lm(mieteqm ~ flaeche.reziprok, data = mietpreise)
-stargazer(model.1, model.2, type = "text")
+model.linear <- lm(mieteqm ~ flaeche, data = mietpreise)
+model.reziprok <- lm(mieteqm ~ flaeche.reziprok, data = mietpreise)
+stargazer(model.linear, model.reziprok, type = "text")
 
 
 
 ggplot() +
   geom_point(aes(mietpreise$flaeche, mietpreise$mieteqm),
              alpha = 0.3) +
-  geom_line(aes(mietpreise$flaeche, model.1$fitted.values), colour = "blue",
+  geom_line(aes(mietpreise$flaeche, model.linear$fitted.values), colour = "blue",
             size = 1) +
-  geom_line(aes(mietpreise$flaeche, model.2$fitted.values), colour = "red",
+  geom_line(aes(mietpreise$flaeche, model.reziprok$fitted.values), colour = "red",
             size = 1) +
   xlab("Flaeche") +
   ylab("Miete / m2") +
@@ -39,7 +39,7 @@ ggplot() +
 
 res.1 <- 
   ggplot() +
-  geom_point(aes(mietpreise$flaeche, model.1$residuals),
+  geom_point(aes(mietpreise$flaeche, model.linear$residuals),
              alpha = 0.3) +
   geom_abline(intercept = 0, slope = 0, size = 1,
               colour = "blue") +
@@ -51,7 +51,7 @@ res.1 <-
 
 res.2 <-
   ggplot() +
-  geom_point(aes(model.1$fitted.values, model.1$residuals),
+  geom_point(aes(model.linear$fitted.values, model.linear$residuals),
              alpha = 0.3) +
   geom_abline(intercept = 0, slope = 0, size = 1,
               colour = "blue") +
@@ -63,7 +63,7 @@ res.2 <-
 
 res.3 <- 
   ggplot() +
-  geom_point(aes(mietpreise$flaeche, model.2$residuals),
+  geom_point(aes(mietpreise$flaeche, model.reziprok$residuals),
              alpha = 0.3) +
   geom_abline(intercept = 0, slope = 0, size = 1,
               colour = "green") +
@@ -75,7 +75,7 @@ res.3 <-
 
 res.4 <-
   ggplot() +
-  geom_point(aes(model.2$fitted.values, model.2$residuals),
+  geom_point(aes(model.reziprok$fitted.values, model.reziprok$residuals),
              alpha = 0.3) +
   geom_abline(intercept = 0, slope = 0, size = 1,
               colour = "green") +
@@ -86,6 +86,22 @@ res.4 <-
   theme(plot.title = element_text(hjust = 0.5))
 
 multiplot(res.1, res.2, res.3, res.4, cols = 2)
+
+qq.linear <- 
+  ggplot() +
+  stat_qq(aes(sample = model.linear$residuals)) +
+  theme_bw() +
+  ggtitle("QQ-Plot Residuals Linear") +
+  theme(plot.title = element_text(hjust = 0.5))
+
+qq.reziprok <-
+  ggplot() +
+  stat_qq(aes(sample = model.reziprok$residuals)) +
+  theme_bw() +
+  ggtitle("QQ-Plot Residuals Reziprok") +
+  theme(plot.title = element_text(hjust = 0.5))
+
+multiplot(qq.linear, qq.reziprok, cols = 2)
 
 ##################################################################################
 # Aufgabe 2                                                                      #
@@ -236,3 +252,18 @@ res.4 <-
   theme(plot.title = element_text(hjust = 0.5))
 
 multiplot(res.1, res.2, res.3, res.4, cols = 2)
+
+##################################################################################
+# Aufgabe 4                                                                      #
+##################################################################################
+
+str(mietpreise)
+
+mietpreise$lage <- factor(mietpreise$lage, 1:3, c("normal", "gut", "beste"))
+
+model <- lm(miete ~ lage, data = mietpreise)
+summary(model)
+
+round(model$coefficients[[1]],2)                            # normale Lage
+round(model$coefficients[[1]] + model$coefficients[[2]],2)  # gute Lage
+round(model$coefficients[[1]] + model$coefficients[[3]],2)  # beste Lage
